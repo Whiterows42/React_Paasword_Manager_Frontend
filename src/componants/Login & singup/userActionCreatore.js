@@ -1,0 +1,26 @@
+import axios from "axios";
+
+const baseUrl = import.meta.env.VITE_USER_BASE_URL;;
+
+export const createUserEntityApi =async (obj) => { 
+
+ const response = await   axios.post(baseUrl + "/create_user", obj);
+ return response
+ }
+
+ export const loginEntityApi = async (email, password) => { 
+
+    const response = await axios.post(baseUrl + `/login_user/${email}/${password}`)
+
+    return response
+  }
+
+  export const userdetailsEnityApi = async (email) => {
+    const response = await axios.get(baseUrl + `/show_user_details/${email}`);
+    return response;
+  }
+
+  export const uploadUserProfilePicApi = async (id , file) => {
+    const response = await axios.post(baseUrl + `/upload_profile/pic/${id}`, file );
+    return response
+  }

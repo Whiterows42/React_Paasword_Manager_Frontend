@@ -1,0 +1,23 @@
+<svg class="favicon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" w-tid="7">
+    <defs w-tid="8">
+      <linearGradient id="shieldGradient" x1="0%" y1="0%" x2="100%" y2="100%" w-tid="9">
+        <stop offset="0%" stop-color="#667eea" w-tid="10"></stop>
+        <stop offset="100%" stop-color="#764ba2" w-tid="11"></stop>
+      </linearGradient>
+      <filter id="shadow" w-tid="12">
+        <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.3" w-tid="13"></feDropShadow>
+      </filter>
+    </defs>
+    <g class="shield-outer" filter="url(#shadow)" w-tid="14">
+      <path d="M50 5 L95 25 V50 C95 70 80 85 50 95 C20 85 5 70 5 50 V25 Z" fill="url(#shieldGradient)" w-tid="15"></path>
+    </g>
+    <g class="shield-inner" w-tid="16">
+      <path d="M50 15 L85 30 V50 C85 65 72.5 77.5 50 85 C27.5 77.5 15 65 15 50 V30 Z" fill="#fff" opacity="0.3" w-tid="17"></path>
+      <path d="M50 20 L80 33 V50 C80 63 70 73 50 80 C30 73 20 63 20 50 V33 Z" fill="#fff" opacity="0.5" w-tid="18"></path>
+    </g>
+    <g w-tid="19">
+      <circle cx="50" cy="45" r="15" fill="#fff" w-tid="20"></circle>
+      <path d="M50 35 L50 55 M40 45 L60 45" stroke="#667eea" stroke-width="4" stroke-linecap="round" w-tid="21"></path>
+      <path d="M50 60 L50 65" stroke="#667eea" stroke-width="4" stroke-linecap="round" w-tid="22"></path>
+    </g>
+  </svg>
