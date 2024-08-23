@@ -20,7 +20,7 @@ const GetStarted = () => {
             </h1>
             <div className="content mt-4 mb-4">
               <div>
-                <p className="text-black">
+                <p className="text-black dark:text-white">
                   <span className="text-xl text-blue-500 font-bold font-sans">
                     SecureVault
                   </span>{" "}

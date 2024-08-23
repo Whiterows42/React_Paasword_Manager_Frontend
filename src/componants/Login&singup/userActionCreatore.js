@@ -24,3 +24,10 @@ export const createUserEntityApi =async (obj) => {
     const response = await axios.post(baseUrl + `/upload_profile/pic/${id}`, file );
     return response
   }
+
+  export const updateUserEntityApi = async (id ,obj) => {
+    
+    const response = await axios.put(baseUrl+`/update_user/${id}`, obj)
+
+    return response;
+  }

@@ -1,8 +1,11 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { userdetailsEnityApi } from "../Login & singup/userActionCreatore";
-import { handleDarkmode, handleUserDetailsEntity } from "../redux/reducer/passwordReducer";
+import { userdetailsEnityApi } from "../Login&singup/userActionCreatore";
+import {
+  handleDarkmode,
+  handleUserDetailsEntity,
+} from "../redux/reducer/passwordReducer";
 
 const Header = () => {
   const [islogin, setIslogin] = useState(false);
@@ -25,25 +28,24 @@ const Header = () => {
         }
       });
     }
-    
   }, [islogin, userlogin]);
 
   const userdetials = useSelector(
     (state) => state.password_manager.userdetailsEntity
   );
-const detectDarkmode = useSelector((state) => state.password_manager.darkmode); 
+  const detectDarkmode = useSelector(
+    (state) => state.password_manager.darkmode
+  );
 
   useEffect(() => {
     setUserdetailslist(userdetials);
   }, [userdetials]);
 
- const [darkMode, setDarkMode] = useState(() => {
-   // Load darkMode state from localStorage or default to false
-   const savedTheme = localStorage.getItem("darkMode");
-   return savedTheme === true;
- });
-
- 
+  const [darkMode, setDarkMode] = useState(() => {
+    // Load darkMode state from localStorage or default to false
+    const savedTheme = localStorage.getItem("darkMode");
+    return savedTheme === true;
+  });
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("darkMode");
@@ -60,10 +62,9 @@ const detectDarkmode = useSelector((state) => state.password_manager.darkmode);
       document.documentElement.classList.remove("dark");
     }
   }, [darkMode]);
-  
+
   useEffect(() => {
     dispatch(handleDarkmode(darkMode));
-    
   }, [darkMode]);
 
   const [showProfileTab, setShowProfileTab] = useState(false);
@@ -78,7 +79,7 @@ const detectDarkmode = useSelector((state) => state.password_manager.darkmode);
     localStorage.clear();
     navigate("/login");
   }, [navigate]);
- 
+
   return (
     <div className="flex justify-between shadow sticky p-2 dark:bg-[#1D1E22] dark:text-white rounded-md bg-[#F0F4F8] transition-all top-0 z-30">
       <div className="brandname flex items-center">
@@ -146,34 +147,32 @@ const detectDarkmode = useSelector((state) => state.password_manager.darkmode);
                       borderRadius: "50%",
                     }}
                   ></lord-icon> */}
-                  {userdetailslist && userdetailslist
-                    ? userdetailslist.map((img) => (
-                        <div className=" w-[4rem] h-[4rem]  border border-blue-400  rounded-full overflow-hidden flex  ">
-                          <img
-                            className=" w-full h-full object-contain"
-                            style={{
-                              borderRadius: "50%",
-                            }}
-                            src={img.profilePictureUrl}
-                            alt=""
-                          />
-                        </div>
-                      ))
-                    : (
-
-                        <lord-icon
-                              src="https://cdn.lordicon.com/dxjqoygy.json"
-                              trigger="hover"
-                              colors="primary:#3B82F6,secondary:#3B82F6"
-                              style={{
-                                width: "4rem",
-                                height: "4rem",
-                                background: "#daf9ff",
-                                borderRadius: "50%",
-                              }}
-                            ></lord-icon>
-                    )
-                      }
+                  {userdetailslist && userdetailslist ? (
+                    userdetailslist.map((img) => (
+                      <div className=" w-[4rem] h-[4rem]  border border-blue-400  rounded-full overflow-hidden flex  ">
+                        <img
+                          className=" w-full h-full object-contain"
+                          style={{
+                            borderRadius: "50%",
+                          }}
+                          src={img.profilePictureUrl}
+                          alt=""
+                        />
+                      </div>
+                    ))
+                  ) : (
+                    <lord-icon
+                      src="https://cdn.lordicon.com/dxjqoygy.json"
+                      trigger="hover"
+                      colors="primary:#3B82F6,secondary:#3B82F6"
+                      style={{
+                        width: "4rem",
+                        height: "4rem",
+                        background: "#daf9ff",
+                        borderRadius: "50%",
+                      }}
+                    ></lord-icon>
+                  )}
                 </div>
                 {showProfileTab && userdetailslist.length > 0
                   ? userdetailslist.map((details) => (
@@ -250,14 +249,20 @@ const detectDarkmode = useSelector((state) => state.password_manager.darkmode);
                               <span></span> Upgrade to pro
                             </li>
                             <li className="flex items-center gap-2">
-                              <lord-icon
-                                src="https://cdn.lordicon.com/wyqtxzeh.json"
-                                trigger="hover"
-                                stroke="bold"
-                                colors="primary:#3B82F6,secondary:#3B82F6"
-                                style={{ width: "2rem", height: "2rem" }}
-                              ></lord-icon>
-                              <span></span> Upgrade to pro
+                              <Link
+                                to={"/pass_manager"}
+                                style={{ textDecoration: "none" }}
+                                className="flex text-black dark:text-white items-center gap-2 "
+                              >
+                                <lord-icon
+                                  src="https://cdn.lordicon.com/ghhwiltn.json"
+                                  trigger="hover"
+                                  stroke="bold"
+                                  colors="primary:#3B82F6,secondary:#3B82F6"
+                                  style={{ width: "2rem", height: "2rem" }}
+                                ></lord-icon>
+                                <span></span> Passwords
+                              </Link>
                             </li>
                             <li className="flex gap-4 items-center">
                               <lord-icon
