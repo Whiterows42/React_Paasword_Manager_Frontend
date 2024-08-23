@@ -261,7 +261,7 @@ const Header = () => {
                                   colors="primary:#3B82F6,secondary:#3B82F6"
                                   style={{ width: "2rem", height: "2rem" }}
                                 ></lord-icon>
-                                <span></span> Passwords check
+                                <span></span> Passwords 
                               </Link>
                             </li>
                             <li className="flex gap-4 items-center">
