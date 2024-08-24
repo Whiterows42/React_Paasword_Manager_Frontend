@@ -11,17 +11,17 @@ import {
   Route,
   RouterProvider,
 } from "react-router-dom";
+import PasswordMan from "./componants/password_Manager/PasswordMan.jsx";
 import Login from "./componants/Login&singup/Login.jsx";
-import SignUp from "./componants/Login&singup/SingUp.jsx";
-import PasswordMan from "./componants/password Manager/PasswordMan.jsx";
+import SingUp from "./componants/Login&singup/SingUp.jsx";
 import GetStarted from "./componants/Get Started page/GetStarted.jsx";
-import EditUserProfile from "./componants/User Profile/EditUserProfile.jsx";
+import EditUserProfile from "./componants/User_Profile/EditUserProfile.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="" element={<App />}>
       <Route path="/" element={<GetStarted />} />
-      <Route path="/singup" element={<SignUp />} />
+      <Route path="/singup" element={<SingUp />} />
       <Route path="/login" element={<Login />} />
       <Route path="/pass_manager" element={<PasswordMan />} />
       <Route path="/edit_profile/:id" element={<EditUserProfile />} />

@@ -16,7 +16,7 @@ import eyecloseicon from "./icon/eyeclose.svg";
 import eyeopen from "./icon/eyeopen.svg";
 import hidedivvertically from "./icon/hidedivvertically.svg";
 import genrateP from "./icon/genrateP.svg";
-import PasswordGen from "../Password Genrator/PasswordGen";
+import PasswordGen from "../Password_Genrator/PasswordGen";
 import { useNavigate } from "react-router-dom";
 const PasswordMan = () => {
   const [passwordmanger, setPasswordmanger] = useState({
