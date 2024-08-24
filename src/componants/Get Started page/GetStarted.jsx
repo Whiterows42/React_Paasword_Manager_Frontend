@@ -4,14 +4,15 @@ import reactLogo from "./icons/logo.svg";
 import lock from "./icons/lock.svg"
 import "./GetStartcss.css";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 const GetStarted = () => {
-
+ const darkmode = useSelector((state) => state.password_manager.darkmode);
   const navigate = useNavigate()
   const handleGetStarted = () => { 
     navigate("/pass_manager");
    }
   return (
-    <div className=" getStarted dark:bg-black dark:text-white z-10 ">
+    <div className=" getStarted dark:bg-[#1A1A1A] px-4 py-2 rounded-md dark:text-white z-10 ">
       <section className="first_section flex justify-between items-center">
         <div className="left ">
           <div className="headingtext">
@@ -50,14 +51,17 @@ const GetStarted = () => {
 
       <section className="secon_section mt-20">
         <div className="features flex  justify-between ">
-          <div className="f1 dark:bg-gray-950 dark:text-white ff w-[30%] flex flex-col items-center text-center gap-4 bg-white  p-4 rounded-md shadow-md">
+          <div className="f1 dark:bg-[#121212] dark:text-white ff w-[30%] flex flex-col items-center text-center gap-4 bg-white  p-4 rounded-md shadow-md">
             <div className="icon w-14">
-              {/* <img src={lock} alt="" /> */}
               <lord-icon
                 src="https://cdn.lordicon.com/khheayfj.json"
                 trigger="hover"
                 stroke="bold"
-                colors="primary:#104891,secondary:#1663c7"
+                colors={` ${
+                  darkmode
+                    ? "primary:#ffff,secondary:#ffff"
+                    : "primary:#104891,secondary:#1663c7"
+                } `}
                 style={{ width: "5rem", height: "5rem" }}
               ></lord-icon>
             </div>
@@ -73,7 +77,7 @@ const GetStarted = () => {
               </p>
             </div>
           </div>
-          <div className="f2 dark:bg-gray-950 dark:text-white ff w-[30%] flex flex-col items-center text-center gap-4 bg-white p-4 rounded-md shadow-md">
+          <div className="f2 dark:bg-[#121212] dark:text-white ff w-[30%] flex flex-col items-center text-center gap-4 bg-white p-4 rounded-md shadow-md">
             <div className="icon w-14">
               {/* <img src={lock} alt="" /> */}
               <lord-icon
@@ -96,7 +100,7 @@ const GetStarted = () => {
               </p>
             </div>
           </div>
-          <div className="f3 ff dark:bg-gray-950 dark:text-white w-[30%] flex flex-col items-center text-center gap-4 bg-white  p-4 rounded-md shadow-md">
+          <div className="f3 ff dark:bg-[#121212] dark:text-white w-[30%] flex flex-col items-center text-center gap-4 bg-white  p-4 rounded-md shadow-md">
             <div className="icon w-14">
               {/* <img src={lock} alt="" /> */}
               <lord-icon

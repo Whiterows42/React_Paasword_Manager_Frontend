@@ -1,8 +1,0 @@
-@media screen and (max-device-width: 748px) {
-.showonsm{
-    display: block;
-}
-.showonmd{
-    display: none;
-}
-}

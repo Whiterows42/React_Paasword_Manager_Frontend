@@ -14,7 +14,7 @@ function App() {
 
   return (
     <>
-      <div className="dark:bg-black dark:text-white maincontainer transition-all">
+      <div className="dark:bg-[#121212] dark:text-white maincontainer transition-all">
         <Header />
 
         {<Outlet />}
