@@ -53,15 +53,25 @@ const handleOnChange = useCallback((e) => {
 
   const [showPasswordGen, setshowPasswordGen] = useState(false)
   const [showpassicon, setShowpassicon] = useState(false)
+  const [elemets, setElemets] = useState({
+    numberOfElements :"",
+    totalElements :"",
+
+  });
   useEffect(() => {
 
 
     allStoredPasswordApi(currentPage,passwordmanger.email)
       .then((res) => {
-        console.log("res", res);
+        console.log("res s", res);
         dispatch(setFeilds(res.data?.content));
         setTotalPages(res.data.totalPages);
         // setAllpasswordEntity(res.data)
+        setElemets({
+          numberOfElements: res.data.numberOfElements,
+          totalElements:res.data.totalElements,
+        });
+        
 
       })
       .catch((e) => {
@@ -71,8 +81,9 @@ const handleOnChange = useCallback((e) => {
 
   useEffect(() => {
     setAllpasswordEntity(values);
-  }, [values]);
+  }, [values , formsubmited]);
 
+  
   const columns = useMemo(
     () => [
       { Header: "Id", accessor: "id", width: 120 },
@@ -197,9 +208,7 @@ const handleOnChange = useCallback((e) => {
     .catch((e)=>{
       console.log(e);
       
-    }).finally(
-      setFormsubmited(!formsubmited)
-    )
+    })
     
   }
  
@@ -311,7 +320,7 @@ const handleOnChange = useCallback((e) => {
                         width: "100%",
                         borderCollapse: "collapse",
                         backgroundColor: "dark:bg-[#1A1A1A]",
-                        borderRadius:"0.375rem"
+                        borderRadius: "0.375rem",
                       }
                     : { width: "100%", borderCollapse: "collapse" }
                 }
@@ -338,12 +347,15 @@ const handleOnChange = useCallback((e) => {
                   ))}
                 </thead>
 
-                <tbody className="dark:text-black" {...getTableBodyProps()}>
+                <tbody
+                  className="dark:text-black"
+                  // {...getTableBodyProps()}
+                >
                   {rows.map((row) => {
                     prepareRow(row);
                     return (
                       <tr
-                        {...row.getRowProps()}
+                        // {...row.getRowProps()}
                         style={{
                           background:
                             row.index % 2 === 0 ? "#ffffff" : "#F1F6FF",
@@ -368,7 +380,7 @@ const handleOnChange = useCallback((e) => {
                               //   value={cell.value}
                               // />
                               <span className="flex font-bold">
-                                {cell.value.replace(/./g, "*")}
+                                {cell.value && cell.value.replace(/./g, "*")}
                               </span>
                             ) : cellIndex === 2 ? (
                               <span className="text-ellipsis w-full">
@@ -413,65 +425,68 @@ const handleOnChange = useCallback((e) => {
                   })}
                 </tbody>
               </table>
-
-              <div className="pagination mt-3 dark:text-white flex items-center gap-4 ">
-                <button
-                  className=" previusbtn rounded-full flex items-center"
-                  onClick={() => handlePageChange(pageIndex - 1)}
-                  disabled={!canPreviousPage}
-                  style={{}}
-                >
-                  <svg
-                    className="   hover:scale-90 transition-all p-2  bg-black  dark:bg-white dark:text-black"
-                    width="2rem"
-                    viewBox="0 0 1024 1024"
-                    class="icon"
-                    version="1.1"
-                    xmlns="http://www.w3.org/2000/svg"
-                    style={{
-                      backgroundColor: darkmode ? "#fff" : "#000",
-                      color: darkmode ? "#000" : "#fff",
-                      borderRadius: "50%",
-                      padding: "0.5rem",
-                    }}
+              <div className="pagination flex justify-between items-center">
+                <div className=" mt-3 dark:text-white flex items-center gap-4 ">
+                  <button
+                    className=" previusbtn rounded-full flex items-center"
+                    onClick={() => handlePageChange(pageIndex - 1)}
+                    disabled={!canPreviousPage}
+                    style={{}}
                   >
-                    <g id="SVGRepo_iconCarrier">
-                      <path
-                        d="M768 903.232l-50.432 56.768L256 512l461.568-448 50.432 56.768L364.928 512z"
-                        fill={`${darkmode ? "#000" : "#fff"}   `}
-                      ></path>
-                    </g>
-                  </svg>
-                </button>
-                <span>
-                  Page{" "}
-                  <strong>
-                    {pageIndex + 1} of {totalPages}
-                  </strong>{" "}
-                </span>
-                <button
-                  className="nextbtn rounded-full transition-all rotate-180"
-                  onClick={() => handlePageChange(pageIndex + 1)}
-                >
-                  <svg
-                    className="rounded-full hover:scale-90 transition-all p-2"
-                    width="2rem"
-                    viewBox="0 0 1024 1024"
-                    version="1.1"
-                    xmlns="http://www.w3.org/2000/svg"
-                    style={{
-                      backgroundColor: darkmode ? "#fff" : "#000",
-                      color: darkmode ? "#000" : "#fff",
-                    }}
+                    <svg
+                      className="   hover:scale-90 transition-all p-2  bg-black  dark:bg-white dark:text-black"
+                      width="2rem"
+                      viewBox="0 0 1024 1024"
+                      version="1.1"
+                      xmlns="http://www.w3.org/2000/svg"
+                      style={{
+                        backgroundColor: darkmode ? "#fff" : "#000",
+                        color: darkmode ? "#000" : "#fff",
+                        borderRadius: "50%",
+                        padding: "0.5rem",
+                      }}
+                    >
+                      <g id="SVGRepo_iconCarrier">
+                        <path
+                          d="M768 903.232l-50.432 56.768L256 512l461.568-448 50.432 56.768L364.928 512z"
+                          fill={`${darkmode ? "#000" : "#fff"}   `}
+                        ></path>
+                      </g>
+                    </svg>
+                  </button>
+                  <span>
+                    Page{" "}
+                    <strong>
+                      {pageIndex + 1} of {totalPages}
+                    </strong>{" "}
+                  </span>
+                  <button
+                    className="nextbtn rounded-full transition-all rotate-180"
+                    onClick={() => handlePageChange(pageIndex + 1)}
                   >
-                    <g id="SVGRepo_iconCarrier">
-                      <path
-                        d="M768 903.232l-50.432 56.768L256 512l461.568-448 50.432 56.768L364.928 512z"
-                        fill={darkmode ? "#000" : "#fff"}
-                      ></path>
-                    </g>
-                  </svg>
-                </button>
+                    <svg
+                      className="rounded-full hover:scale-90 transition-all p-2"
+                      width="2rem"
+                      viewBox="0 0 1024 1024"
+                      version="1.1"
+                      xmlns="http://www.w3.org/2000/svg"
+                      style={{
+                        backgroundColor: darkmode ? "#fff" : "#000",
+                        color: darkmode ? "#000" : "#fff",
+                      }}
+                    >
+                      <g id="SVGRepo_iconCarrier">
+                        <path
+                          d="M768 903.232l-50.432 56.768L256 512l461.568-448 50.432 56.768L364.928 512z"
+                          fill={darkmode ? "#000" : "#fff"}
+                        ></path>
+                      </g>
+                    </svg>
+                  </button>
+                </div>
+                <div className="font-bold px-3">
+                  <h1>Showing 1 -{elemets.numberOfElements} of {elemets.totalElements} </h1>
+                </div>
               </div>
             </>
           ) : (
