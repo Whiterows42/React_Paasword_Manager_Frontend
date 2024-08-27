@@ -5,7 +5,7 @@ import { Formik, Form, Field } from "formik";
 import {
   updateUserEntityApi,
   uploadUserProfilePicApi,
-} from "../Login&singup/userActionCreatore";
+} from "../Login_singup/userActionCreatore";
 import { handleUserLogin } from "../redux/reducer/passwordReducer";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import * as Yup from "yup";

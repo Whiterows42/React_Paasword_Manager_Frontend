@@ -12,8 +12,8 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import PasswordMan from "./componants/password_Manager/PasswordMan.jsx";
-import Login from "./componants/Login&singup/Login.jsx";
-import SingUp from "./componants/Login&singup/SingUp.jsx";
+import Login from "./componants/Login_singup/Login.jsx";
+import SingUp from "./componants/Login_singup/SingUp.jsx";
 import GetStarted from "./componants/Get Started page/GetStarted.jsx";
 import EditUserProfile from "./componants/User_Profile/EditUserProfile.jsx";
 

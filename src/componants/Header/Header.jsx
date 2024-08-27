@@ -1,7 +1,7 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { userdetailsEnityApi } from "../Login&singup/userActionCreatore";
+import { userdetailsEnityApi } from "../Login_singup/userActionCreatore";
 import {
   handleDarkmode,
   handleUserDetailsEntity,
