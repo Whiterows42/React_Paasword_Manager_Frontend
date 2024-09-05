@@ -6,7 +6,8 @@ import {
   handleDarkmode,
   handleUserDetailsEntity,
 } from "../redux/reducer/passwordReducer";
-
+import moon from "./icons/moon.svg"
+import sun from "./icons/sun.svg"
 const Header = () => {
   const [islogin, setIslogin] = useState(false);
 
@@ -116,7 +117,7 @@ const Header = () => {
             </NavLink>
           </li>
           <li className="flex items-center cursor-pointer">
-            <input
+            {/* <input
               onChange={() => setDarkMode(!darkMode)}
               type="checkbox"
               id="toggle"
@@ -126,7 +127,14 @@ const Header = () => {
                 className={`${darkMode ? "left-[0.06rem]" : "left-0"}`}
                 id="circle"
               ></div>
-            </label>
+            </label> */}
+            <div className="thememode w-5">
+              {darkMode ? (
+                <img onClick={() => setDarkMode(!darkMode)} src={sun} alt="" />
+              ) : (
+                <img onClick={() => setDarkMode(!darkMode)} src={moon} alt="" />
+              )}
+            </div>
           </li>
           {islogin ? (
             <li
@@ -261,7 +269,7 @@ const Header = () => {
                                   colors="primary:#3B82F6,secondary:#3B82F6"
                                   style={{ width: "2rem", height: "2rem" }}
                                 ></lord-icon>
-                                <span></span> Passwords 
+                                <span></span> Passwords
                               </Link>
                             </li>
                             <li className="flex gap-4 items-center">

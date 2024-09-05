@@ -232,14 +232,14 @@ const handleOnChange = useCallback((e) => {
           />
           <div className="flex gap-3 mt-2">
             <input
-              className="grow p-3 rounded-md border border-blue-500"
+              className="md:grow p-3 rounded-md border border-blue-500"
               type="text"
               name="userName"
               value={passwordmanger.userName}
               placeholder="Enter User name"
               onChange={handleOnChange}
             />
-            <div className="relative">
+            <div className="relative flex">
               <input
                 className="p-3 rounded-md border border-blue-500"
                 type={showpassicon ? "text" : "password"}
@@ -379,8 +379,8 @@ const handleOnChange = useCallback((e) => {
                               //   type="password"
                               //   value={cell.value}
                               // />
-                              <span className="flex font-bold">
-                                {cell.value && cell.value.replace(/./g, "*")}
+                              <span className="flex text-[1vw] font-bold text-ellipsis ">
+                                {cell.value &&  cell.value.replace(/./g, "*")}
                               </span>
                             ) : cellIndex === 2 ? (
                               <span className="text-ellipsis w-full">
