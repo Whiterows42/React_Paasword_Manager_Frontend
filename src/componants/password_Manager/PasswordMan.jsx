@@ -18,72 +18,112 @@ import hidedivvertically from "./icon/hidedivvertically.svg";
 import genrateP from "./icon/genrateP.svg";
 import PasswordGen from "../Password_Genrator/PasswordGen";
 import { useNavigate } from "react-router-dom";
+import { logedUserApi } from "../Login_singup/userActionCreatore";
 const PasswordMan = () => {
   const [passwordmanger, setPasswordmanger] = useState({
     id: "",
     webUrl: "",
     userName: "",
-    email:"",
+    email: "",
     password: "",
   });
-  const navigate = useNavigate()
+
+
+
+  const navigate = useNavigate();
+
+ useEffect(() => {
+   async function checkUserLoggedIn() {
+     try {
+       const response = await logedUserApi(); // Your API call
+
+       // If the response is OK (status 200)
+       if (response.status === 200) {
+         console.log("User is logged in");
+       }
+     } catch (error) {
+       // Check if error is a 401 Unauthorized
+       if (error.response && error.response.status === 401) {
+         console.log("Unauthorized. Redirecting to login...");
+         localStorage.clear();
+         navigate("/login"); // Navigate to login page if unauthorized
+       } else {
+         console.error("An error occurred:", error); // Handle other errors
+       }
+     }
+   }
+
+   checkUserLoggedIn();
+ }, []);
+
   useEffect(() => {
-    const email = localStorage.getItem("email") 
-      if (!email) {
-        navigate("/login")
-      }
-    passwordmanger.email = email
-  }, [])
-  
-  const darkmode = useSelector((state)=>state.password_manager.darkmode)
+    const email = localStorage.getItem("email");
+
+    if (!email) {
+      navigate("/login");
+    }
+    passwordmanger.email = email;
+  }, []);
+
+  const darkmode = useSelector((state) => state.password_manager.darkmode);
   const [formsubmited, setFormsubmited] = useState(false);
   const [allpasswordEntity, setAllpasswordEntity] = useState([]);
   const dispatch = useDispatch();
   const values = useSelector((state) => state.password_manager.passwordmanger);
   const [updatePassEntity, setUpdatePassEntity] = useState(false);
-const [currentPage, setCurrentPage] = useState(0);
- const [pageSize] = useState(3);
-const [totalPages, setTotalPages] = useState(1)
-const handleOnChange = useCallback((e) => {
-  setPasswordmanger((prevState) => ({
-    ...prevState,
-    [e.target.name]: e.target.value,
-  }));
-}, []);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageSize] = useState(3);
+  const [totalPages, setTotalPages] = useState(1);
+  const handleOnChange = useCallback((e) => {
+    setPasswordmanger((prevState) => ({
+      ...prevState,
+      [e.target.name]: e.target.value,
+    }));
+  }, []);
 
-  const [showPasswordGen, setshowPasswordGen] = useState(false)
-  const [showpassicon, setShowpassicon] = useState(false)
+  const [showPasswordGen, setshowPasswordGen] = useState(false);
+  const [showpassicon, setShowpassicon] = useState(false);
   const [elemets, setElemets] = useState({
-    numberOfElements :"",
-    totalElements :"",
-
+    numberOfElements: "",
+    totalElements: "",
   });
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await allStoredPasswordApi(
+          currentPage,
+          passwordmanger.email
+        );
 
+        if (res.status === 200) {
+          console.log("Response:", res);
+          dispatch(setFeilds(res.data?.content));
+          setTotalPages(res.data.totalPages);
+          setElemets({
+            numberOfElements: res.data.numberOfElements,
+            totalElements: res.data.totalElements,
+          });
+        } else {
+          console.log("Unhandled status code:", res.status);
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 401) {
+          localStorage.removeItem("token");
+          console.log("afa");
+        }
 
-    allStoredPasswordApi(currentPage,passwordmanger.email)
-      .then((res) => {
-        console.log("res s", res);
-        dispatch(setFeilds(res.data?.content));
-        setTotalPages(res.data.totalPages);
-        // setAllpasswordEntity(res.data)
-        setElemets({
-          numberOfElements: res.data.numberOfElements,
-          totalElements:res.data.totalElements,
-        });
-        
+        console.log("API Error:", error);
+        // Handle API call errors or show an alert if needed
+      }
+    };
 
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+    fetchData(); // Call the async function
   }, [formsubmited, currentPage]);
 
   useEffect(() => {
     setAllpasswordEntity(values);
-  }, [values , formsubmited]);
+  }, [values, formsubmited]);
 
-  
   const columns = useMemo(
     () => [
       { Header: "Id", accessor: "id", width: 120 },
@@ -103,14 +143,14 @@ const handleOnChange = useCallback((e) => {
       password: v.password,
     }));
   }, [allpasswordEntity]);
-  
+
   const {
     getTableProps,
     getTableBodyProps,
     headerGroups,
     rows,
     prepareRow,
-    state: { pageIndex,  },
+    state: { pageIndex },
     gotoPage,
     nextPage,
     previousPage,
@@ -127,15 +167,23 @@ const handleOnChange = useCallback((e) => {
     useSortBy,
     usePagination
   );
-   const handlePageChange = (page) => {
-     setCurrentPage(page);
-   };
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
   const savePassword = () => {
-    if (passwordmanger.email != "" && passwordmanger.password != "" && passwordmanger.webUrl !="" && passwordmanger.userName != "") {
+    console.log(passwordmanger.email);
+
+    if (
+      passwordmanger.email != "" &&
+      passwordmanger.email != null &&
+      passwordmanger.password != "" &&
+      passwordmanger.webUrl != "" &&
+      passwordmanger.userName != ""
+    ) {
       StorePasswordApi(passwordmanger)
         .then((res) => {
           console.log("res", res);
-         
+
           if (res.status === 200) {
             setPasswordmanger({
               ...passwordmanger,
@@ -143,81 +191,72 @@ const handleOnChange = useCallback((e) => {
               password: "",
               userName: "",
             });
-             toast.success(`Password Saved Successfully`);
+            toast.success(`Password Saved Successfully`);
             setFormsubmited(!formsubmited);
           }
         })
         .catch((e) => {
           console.log(e);
         });
+    } else {
+      toast.error("Feilds is empty !");
     }
-    else{
-      toast.error("Feilds is empty !")
-    }
-    
   };
 
   const editpassword = (obj) => {
-    setPasswordmanger({ ...passwordmanger,...obj});
-    
-    setUpdatePassEntity(!updatePassEntity)
+    setPasswordmanger({ ...passwordmanger, ...obj });
+
+    setUpdatePassEntity(true);
   };
 
   const editPasswordEntity = (obj) => {
     console.log(obj);
-    
+
     const { id } = obj;
     editPasswordManagerEntityApi(id, passwordmanger)
       .then((res) => {
         console.log(res);
         toast.success("Update Successfully");
         setFormsubmited(!formsubmited);
-          setPasswordmanger({
-            ...passwordmanger,
-            webUrl: "",
-            password: "",
-            userName: "",
-          });
-          
-    setUpdatePassEntity(!updatePassEntity);
+        setPasswordmanger({
+          ...passwordmanger,
+          webUrl: "",
+          password: "",
+          userName: "",
+        });
+
+        setUpdatePassEntity(!updatePassEntity);
       })
       .catch((e) => {
         console.log(e);
       });
   };
 
-  const cancelEditPasswordEntity = () => { 
-
-    setUpdatePassEntity(!updatePassEntity)
+  const cancelEditPasswordEntity = () => {
+    setUpdatePassEntity(!updatePassEntity);
     setPasswordmanger({
-      id:"",
-      webUrl:"",
-      userName:"",
-      password:""
-    })
-    toast.warn("Cancled")
-   }
-  const deletePasswordEntity = (id) => { 
+      id: "",
+      webUrl: "",
+      userName: "",
+      password: "",
+    });
+    toast.warn("Cancled");
+  };
+  const deletePasswordEntity = (id) => {
+    deletePasswordEntityApi(id)
+      .then((res) => {
+        console.log(res);
+        toast.success("Delete Successfully");
+        setFormsubmited(!formsubmited);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
 
-    deletePasswordEntityApi(id).then((res)=>{
-      console.log(res);
-      toast.success("Delete Successfully")
-      setFormsubmited(!formsubmited)
-      
-    })
-    .catch((e)=>{
-      console.log(e);
-      
-    })
-    
-  }
- 
-
-   const configureError = (first) => {
-
+  const configureError = (first) => {
     console.log(first);
-    
-     }
+  };
   return (
     <>
       <div className="h-screen mt-9  dark:text-white transition-all">
@@ -380,7 +419,7 @@ const handleOnChange = useCallback((e) => {
                               //   value={cell.value}
                               // />
                               <span className="flex text-[1vw] font-bold text-ellipsis ">
-                                {cell.value &&  cell.value.replace(/./g, "*")}
+                                {cell.value && cell.value.replace(/./g, "*")}
                               </span>
                             ) : cellIndex === 2 ? (
                               <span className="text-ellipsis w-full">
@@ -485,7 +524,10 @@ const handleOnChange = useCallback((e) => {
                   </button>
                 </div>
                 <div className="font-bold px-3">
-                  <h1>Showing 1 -{elemets.numberOfElements} of {elemets.totalElements} </h1>
+                  <h1>
+                    Showing 1 -{elemets.numberOfElements} of{" "}
+                    {elemets.totalElements}{" "}
+                  </h1>
                 </div>
               </div>
             </>
@@ -511,4 +553,4 @@ const handleOnChange = useCallback((e) => {
   );
 };
 
-export default memo( PasswordMan);
+export default memo(PasswordMan);

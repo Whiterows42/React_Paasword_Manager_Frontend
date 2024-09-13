@@ -18,22 +18,38 @@ const Header = () => {
   }, [userlogin]);
 
   const [userdetailslist, setUserdetailslist] = useState([]);
-  useEffect(() => {
-    const email = localStorage.getItem("email");
 
-    if (email) {
-      setIslogin(true);
-      userdetailsEnityApi(email).then((res) => {
-        if (res.status === 200) {
-          dispatch(handleUserDetailsEntity(res.data));
-        }
-      });
+useEffect(() => {
+  
+  const fetchUserDetails = async (email) => {
+    try {
+      const res = await userdetailsEnityApi(email);
+      if (res.status === 200) {
+        setIslogin(true);
+        dispatch(handleUserDetailsEntity(res.data)); // Dispatch user details on success
+      }
+      else if (res.status === 401) {
+        navigate("/login")
+
+      }
+    } catch (error) {
+      console.error("Error fetching user details:", error); // Handle any API errors
     }
-  }, [islogin, userlogin]);
+  };
+
+  const email = localStorage.getItem("email");
+
+  if (email) {
+    setIslogin(true);
+    fetchUserDetails(email); 
+  }
+}, [islogin, userlogin, dispatch]);
+
 
   const userdetials = useSelector(
     (state) => state.password_manager.userdetailsEntity
   );
+  
   const detectDarkmode = useSelector(
     (state) => state.password_manager.darkmode
   );
@@ -156,18 +172,30 @@ const Header = () => {
                     }}
                   ></lord-icon> */}
                   {userdetailslist && userdetailslist ? (
-                    userdetailslist.map((img) => (
-                      <div className=" w-[4rem] h-[4rem]  border border-blue-400  rounded-full overflow-hidden flex  ">
+                    <div className=" w-[4rem] h-[4rem]  border border-blue-400  rounded-full overflow-hidden flex  ">
+                      {userdetailslist && userdetailslist.profilePictureUrl ? (
                         <img
                           className=" w-full h-full object-contain"
                           style={{
                             borderRadius: "50%",
                           }}
-                          src={img.profilePictureUrl}
+                          src={userdetailslist.profilePictureUrl}
                           alt=""
                         />
-                      </div>
-                    ))
+                      ) : (
+                        <lord-icon
+                          src="https://cdn.lordicon.com/dxjqoygy.json"
+                          trigger="hover"
+                          colors="primary:#3B82F6,secondary:#3B82F6"
+                          style={{
+                            width: "4rem",
+                            height: "4rem",
+                            background: "#daf9ff",
+                            borderRadius: "50%",
+                          }}
+                        ></lord-icon>
+                      )}
+                    </div>
                   ) : (
                     <lord-icon
                       src="https://cdn.lordicon.com/dxjqoygy.json"
@@ -182,132 +210,135 @@ const Header = () => {
                     ></lord-icon>
                   )}
                 </div>
-                {showProfileTab && userdetailslist.length > 0
-                  ? userdetailslist.map((details) => (
-                      <div
-                        key={details.id}
-                        className="profile shadow-md absolute dark:bg-black dark:text-white mt-3 transition-all right-0 bg-white rounded-lg p-4 "
-                      >
-                        <div className="useremail flex gap-2 mb-2 items-center ">
-                          {details?.profilePictureUrl.length - 1 < 0 ? (
-                            <div className="relative">
-                              <lord-icon
-                                src="https://cdn.lordicon.com/dxjqoygy.json"
-                                trigger="hover"
-                                colors="primary:#3B82F6,secondary:#3B82F6"
-                                style={{
-                                  width: "4rem",
-                                  height: "4rem",
-                                  background: "#daf9ff",
-                                  borderRadius: "50%",
-                                }}
-                              ></lord-icon>
-                              <span
-                                onClick={() =>
-                                  navigate(`/edit_profile/${details.id}`)
-                                }
-                                className="absolute pointer-events-none left-0 w-full opacity-0 hover:block h-[89%]  bg-gray-900   rounded-full"
-                              ></span>
-                            </div>
+                {showProfileTab && userdetailslist.id > 0 ? (
+                  <div
+                    key={userdetailslist.id}
+                    className="profile shadow-md absolute dark:bg-black dark:text-white mt-3 transition-all right-0 bg-white rounded-lg p-4 "
+                  >
+                    <div className="useremail flex gap-2 mb-2 items-center ">
+                      {userdetailslist.profilePictureUrl &&
+                      userdetailslist?.profilePictureUrl.length - 1 < 0 ? (
+                        <div className="relative">
+                          <span
+                            onClick={() =>
+                              navigate(`/edit_profile/${userdetailslist.id}`)
+                            }
+                            className="absolute pointer-events-none left-0 w-full opacity-0 hover:block h-[89%]  bg-gray-900   rounded-full"
+                          ></span>
+                        </div>
+                      ) : (
+                        // <lord-icon
+                        //   src="https://cdn.lordicon.com/dxjqoygy.json"
+                        //   trigger="hover"
+                        //   colors="primary:#3B82F6,secondary:#3B82F6"
+                        //   style={{
+                        //     width: "4rem",
+                        //     height: "4rem",
+                        //     background: "#daf9ff",
+                        //     borderRadius: "50%",
+                        //   }}
+                        // ></lord-icon>
+
+                        <div className=" w-[4rem] h-[4rem]  border border-blue-400  rounded-full overflow-hidden flex  ">
+                          {userdetailslist &&
+                          userdetailslist.profilePictureUrl ? (
+                            <img
+                              className=" w-full h-full object-contain"
+                              style={{
+                                borderRadius: "50%",
+                              }}
+                              src={userdetailslist.profilePictureUrl}
+                              alt=""
+                            />
                           ) : (
-                            // <lord-icon
-                            //   src="https://cdn.lordicon.com/dxjqoygy.json"
-                            //   trigger="hover"
-                            //   colors="primary:#3B82F6,secondary:#3B82F6"
-                            //   style={{
-                            //     width: "4rem",
-                            //     height: "4rem",
-                            //     background: "#daf9ff",
-                            //     borderRadius: "50%",
-                            //   }}
-                            // ></lord-icon>
-
-                            <div className=" w-[4rem] h-[4rem]  border border-blue-400  rounded-full overflow-hidden flex  ">
-                              <img
-                                className=" w-full h-full object-contain"
-                                style={{
-                                  borderRadius: "50%",
-                                }}
-                                src={details.profilePictureUrl}
-                                alt=""
-                              />
-                            </div>
-                          )}
-
-                          <div>
-                            <h3 className="hover:text-blue-400">
-                              {details.email}
-                            </h3>
-                            <p className="text-gray-500 hover:text-blue-400 text-sm">
-                              Free Plan
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="shadow-inner px-2 pt-4 mb-3">
-                          <ul className="flex  flex-col gap-4">
-                            <li className="flex items-center gap-2">
-                              <lord-icon
-                                src="https://cdn.lordicon.com/wyqtxzeh.json"
-                                trigger="hover"
-                                stroke="bold"
-                                colors="primary:#3B82F6,secondary:#3B82F6"
-                                style={{ width: "2rem", height: "2rem" }}
-                              ></lord-icon>
-                              <span></span> Upgrade to pro
-                            </li>
-                            <li className="flex items-center gap-2">
-                              <Link
-                                to={"/pass_manager"}
-                                style={{ textDecoration: "none" }}
-                                className="flex text-black dark:text-white items-center gap-2 "
-                              >
-                                <lord-icon
-                                  src="https://cdn.lordicon.com/ghhwiltn.json"
-                                  trigger="hover"
-                                  stroke="bold"
-                                  colors="primary:#3B82F6,secondary:#3B82F6"
-                                  style={{ width: "2rem", height: "2rem" }}
-                                ></lord-icon>
-                                <span></span> Passwords
-                              </Link>
-                            </li>
-                            <li className="flex gap-4 items-center">
-                              <lord-icon
-                                src="https://cdn.lordicon.com/lecprnjb.json"
-                                trigger="hover"
-                                colors="primary:#3B82F6,secondary:#3B82F6"
-                                style={{ width: "2rem", height: "2rem" }}
-                              ></lord-icon>
-
-                              <Link
-                                className="text-inherit dark:text-white"
-                                to={`/edit_profile/${details.id}`}
-                              >
-                                Setting
-                              </Link>
-                            </li>
-                          </ul>
-                        </div>
-                        <div className="logout shadow-inner flex gap-2 items-center px-2 py-1">
-                          <div className="flex" style={{ rotate: "90deg" }}>
                             <lord-icon
-                              src="https://cdn.lordicon.com/dxnllioo.json"
+                              src="https://cdn.lordicon.com/dxjqoygy.json"
+                              trigger="hover"
+                              colors="primary:#3B82F6,secondary:#3B82F6"
+                              style={{
+                                width: "4rem",
+                                height: "4rem",
+                                background: "#daf9ff",
+                                borderRadius: "50%",
+                              }}
+                            ></lord-icon>
+                          )}
+                        </div>
+                      )}
+
+                      <div>
+                        <h3 className="hover:text-blue-400">
+                          {userdetailslist.email}
+                        </h3>
+                        <p className="text-gray-500 hover:text-blue-400 text-sm">
+                          Free Plan
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="shadow-inner px-2 pt-4 mb-3">
+                      <ul className="flex  flex-col gap-4">
+                        <li className="flex items-center gap-2">
+                          <lord-icon
+                            src="https://cdn.lordicon.com/wyqtxzeh.json"
+                            trigger="hover"
+                            stroke="bold"
+                            colors="primary:#3B82F6,secondary:#3B82F6"
+                            style={{ width: "2rem", height: "2rem" }}
+                          ></lord-icon>
+                          <span></span> Upgrade to pro
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Link
+                            to={"/pass_manager"}
+                            style={{ textDecoration: "none" }}
+                            className="flex text-black dark:text-white items-center gap-2 "
+                          >
+                            <lord-icon
+                              src="https://cdn.lordicon.com/ghhwiltn.json"
                               trigger="hover"
                               stroke="bold"
                               colors="primary:#3B82F6,secondary:#3B82F6"
                               style={{ width: "2rem", height: "2rem" }}
                             ></lord-icon>
-                          </div>
-                          <Link className="text-inherit dark:text-white">
-                            <h3 onClick={logoutNavigate} className="p-2">
-                              Log out
-                            </h3>
+                            <span></span> Passwords
                           </Link>
-                        </div>
+                        </li>
+                        <li className="flex gap-4 items-center">
+                          <lord-icon
+                            src="https://cdn.lordicon.com/lecprnjb.json"
+                            trigger="hover"
+                            colors="primary:#3B82F6,secondary:#3B82F6"
+                            style={{ width: "2rem", height: "2rem" }}
+                          ></lord-icon>
+
+                          <Link
+                            className="text-inherit dark:text-white"
+                            to={`/edit_profile/${userdetailslist.id}`}
+                          >
+                            Setting
+                          </Link>
+                        </li>
+                      </ul>
+                    </div>
+                    <div className="logout shadow-inner flex gap-2 items-center px-2 py-1">
+                      <div className="flex" style={{ rotate: "90deg" }}>
+                        <lord-icon
+                          src="https://cdn.lordicon.com/dxnllioo.json"
+                          trigger="hover"
+                          stroke="bold"
+                          colors="primary:#3B82F6,secondary:#3B82F6"
+                          style={{ width: "2rem", height: "2rem" }}
+                        ></lord-icon>
                       </div>
-                    ))
-                  : null}
+                      <Link className="text-inherit dark:text-white">
+                        <h3 onClick={logoutNavigate} className="p-2">
+                          Log out
+                        </h3>
+                      </Link>
+                    </div>
+                  </div>
+                ) : null}
               </div>
             </li>
           ) : (

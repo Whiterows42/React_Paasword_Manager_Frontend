@@ -67,25 +67,44 @@ const PasswordGen = () => {
             <label className="text-sm">Length:{length} </label>
           </div>
 
-          <div className="flex  items-center">
+          <div className="flex gap-1 items-center">
             <input
+              id="numberallow"
+              className="w-3 h-1 "
               type="checkbox"
               defaultChecked={numverAllow}
               onChange={() => {
                 setNumberAllow((prev) => !prev);
               }}
             />
-            <label className="text-sm"> Number</label>
+
+            <label
+              htmlFor="numberallow"
+              className={`text-sm cursor-pointer ${
+                numverAllow ? "font-bold" : null
+              }`}
+            >
+              {" "}
+              Number
+            </label>
           </div>
           <div className="flex items-center ">
             <input
+              id="chalallow"
               type="checkbox"
               defaultChecked={charAllow}
               onChange={() => {
                 setCharAllow((prev) => !prev);
               }}
             />
-            <label className="text-sm">Character</label>
+            <label
+              htmlFor="chalallow"
+              className={`text-sm cursor-pointer ${
+                charAllow ? "font-bold" : null
+              }`}
+            >
+              Character
+            </label>
           </div>
         </div>
       </div>
