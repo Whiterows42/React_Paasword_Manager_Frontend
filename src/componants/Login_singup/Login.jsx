@@ -2,7 +2,12 @@ import React, { memo, useEffect, useState } from "react";
 import axios from "axios";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { loginEntityApi, resendOtpApi, verifyOtpApi } from "./userActionCreatore"; // Make sure this function returns a Promise
+import {
+  forgottenPasswordApi,
+  loginEntityApi,
+  resendOtpApi,
+  verifyOtpApi,
+} from "./userActionCreatore"; // Make sure this function returns a Promise
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { handleUserLogin } from "../redux/reducer/passwordReducer";
@@ -10,11 +15,14 @@ import eyecloseicon from "./icons/eyeclose.svg";
 import eyeopen from "./icons/eyeopen.svg";
 import OptBox from "./OtpBox";
 const Login = () => {
+
+
   const [user, setUser] = useState({
     email: "",
     password: "",
   });
 
+  
   const handleOnChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
@@ -34,6 +42,8 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [showpassicon, setShowpassicon] = useState(false);
   const [otptiming, setOtptiming] = useState(false);
+  const [showforgotpassui, setShowforgotpassui] = useState(false)
+  const [Forgottenpasswordotpsend, setForgottenpasswordotpsend] = useState(false)
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleLogin = async (e) => {
@@ -47,16 +57,19 @@ const Login = () => {
 
       if (response.status === 200) {
         toast.success("Otp Send successfully");
-
+        const { jwtToken, username } = response.data;
+        console.log(response.data);
+        localStorage.setItem("token", "Bearer " + jwtToken);
+        localStorage.setItem("username", username);
         setshowOtpBox(true);
         setOtptiming(true);
-      } else if (response.status === 404) {
+      } else if (response.status === 401) {
         toast.error("Invalid credentials");
       } else {
         toast.error("Invalid credentials");
       }
     } catch (error) {
-      if (error.response && error.response.status === 404) {
+      if (error.response && error.response.status === 401) {
         toast.error("Invalid credentials");
       } else {
         toast.error("Something went wrong");
@@ -95,37 +108,66 @@ const Login = () => {
     return () => clearInterval(timerId);
   }, [otptiming]);
 
-  const verifyOtp = async (e) => {
-    const formData = new FormData();
-    formData.append("email", user.email);
-    formData.append("otp", e);
-
-    try {
-      const res = await verifyOtpApi(formData);
-
-      if (res.status === 200) {
-        dispatch(handleUserLogin(true));
-        localStorage.setItem("email", user.email);
-        toast.success("OTP verified successfully!");
-        navigate("/pass_manager");
-      } else if (res.status === 410) {
-        console.log("OTP expired");
-        toast.error("OTP expired");
-      }
-    } catch (error) {
-      if (error.response && error.response.status === 410) {
-        toast.error("OTP expired");
-      } else {
-        toast.error("An error occurred, please try again!");
-      }
-      console.log(error);
+const verifyOtp = async (e) => {
+  console.log(e);
+  
+    const otpServiceDto = {
+      email:user.email,
+      otp:e
     }
 
-    console.log(e);
+  try {
+    const res = await verifyOtpApi(otpServiceDto);
+
+    if (res.status === 200) {
+      dispatch(handleUserLogin(true));
+      localStorage.setItem("email", user.email);
+      toast.success("OTP verified successfully!");
+      navigate("/pass_manager");
+    } else if (res.status === 410) {
+      console.log("OTP expired");
+      toast.error("OTP expired");
+    }
+  } catch (error) {
+    if (error.response && error.response.status === 410) {
+      toast.error("OTP expired");
+    } else {
+      toast.error("An error occurred, please try again!");
+    }
+    console.log(error);
+  }
+};
+
+const verifyForgottenOtp = async (e) => {
+  console.log(e);
+
+  const otpServiceDto = {
+    email: user.email,
+    otp: e,
   };
 
+  try {
+    const res = await verifyOtpApi(otpServiceDto);
+
+    if (res.status === 200) {
+     
+      toast.success("OTP verified successfully!");
+      setShowforgotpassui(false)
+    } else if (res.status === 410) {
+      console.log("OTP expired");
+      toast.error("OTP expired");
+    }
+  } catch (error) {
+    if (error.response && error.response.status === 410) {
+      toast.error("OTP expired");
+    } else {
+      toast.error("An error occurred, please try again!");
+    }
+    console.log(error);
+  }
+};
   const handleResendOtp = async () => {
-    toast.success("OTP Resent!");
+   
 
     setResendOtp(false);
     setTimingCounter("01:00");
@@ -135,10 +177,8 @@ const Login = () => {
     resendOtpApi(formData)
       .then((res) => {
         if (res.status === 200) {
-          dispatch(handleUserLogin(true));
-          localStorage.setItem("email", user.email);
-          toast.success("OTP verified successfully!");
-          navigate("/pass_manager");
+         toast.success("OTP Resent!");
+         
         } else if (res.status === 410) {
           console.log("OTP expired");
           toast.error("OTP expired");
@@ -154,17 +194,75 @@ const Login = () => {
       });
   };
 
-  <button
-    onClick={handleResendOtp}
-    className="bg-blue-500 text-white rounded p-2 mt-4"
-  >
-    Resend OTP
-  </button>;
+  // <button
+  //   onClick={handleResendOtp}
+  //   className="bg-blue-500 text-white rounded p-2 mt-4"
+  // >
+  //   Resend OTP
+  // </button>;
+
+const handleForgottenPassowrd = () => { 
+  const {email} = user;
+  const formData = new FormData();
+
+  formData.append("email",email)
+  forgottenPasswordApi(formData).then((res)=>{
+    console.log(res);
+    if (res.status === 200) {
+      setForgottenpasswordotpsend(true)
+    }
+    
+  })
+ }
+
 
   return (
     <>
       <div className=" flex w-full dark:bg-[#1A1A1A] justify-center transition-all dark:text-white h-screen items-center px-2 ">
-        {showOtpBox ? (
+        {showforgotpassui ? (
+          <>
+            <div className="flex flex-col   justify-center rounded-md md:px-16  md:w-[50%]">
+              {Forgottenpasswordotpsend ? (
+                <div className="flex dark:bg-[#1c1b1b] gap-5 py-5 px-4 rounded-lg shadow-lg flex-col  items-center">
+                  <h1 className=" text-3xl text-left font-bold ">Verify Otp</h1>
+                  <p>Enter the 6-digit code sent to your email</p>
+                  <OptBox lenght={6} onOtpSubmit={verifyForgottenOtp} />
+                  <h1>{timingCounter}</h1>
+                  {resendOtp ? (
+                    <button
+                      onClick={handleResendOtp}
+                      className="p-2 px-4 rounded-md bg-black text-white dark:bg-white dark:text-black font-bold "
+                    >
+                      Resend
+                    </button>
+                  ) : null}
+                </div>
+              ) : (
+                <>
+                  <div className="flex flex-col gap-5">
+                    <input
+                      className="p-2 rounded-md outline-none"
+                      name="email"
+                      value={user.email}
+                      type="email"
+                      required
+                      placeholder="enter email"
+                      onChange={handleOnChange}
+                    />
+                    <button
+                      onClick={handleForgottenPassowrd}
+                      disabled={!user.email}
+                      className="p-2 disabled:bg-blue-400 rounded-md bg-blue-600 text-white font-bold"
+                    >
+                      {" "}
+                      Verify Email{" "}
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          </>
+        ) : showOtpBox ? (
           <>
             <div className="flex flex-col   justify-center rounded-md md:px-16  md:w-[50%]">
               <div className="flex dark:bg-[#1c1b1b] gap-5 py-5 px-4 rounded-lg shadow-lg flex-col  items-center">
@@ -173,14 +271,17 @@ const Login = () => {
                 <OptBox lenght={6} onOtpSubmit={verifyOtp} />
                 <h1>{timingCounter}</h1>
                 {resendOtp ? (
-                  <button onClick={handleResendOtp} className="p-2 px-4 rounded-md bg-black text-white dark:bg-white dark:text-black font-bold ">
+                  <button
+                    onClick={handleResendOtp}
+                    className="p-2 px-4 rounded-md bg-black text-white dark:bg-white dark:text-black font-bold "
+                  >
                     Resend
                   </button>
                 ) : null}
               </div>
             </div>
           </>
-        ) : (
+        ) : !showforgotpassui ? (
           <form
             onSubmit={handleLogin}
             className="bg-white dark:bg-[#2F3136] transition-all dark:text-white p-6 w-full rounded-md h-screen flex flex-col justify-center md:w-[50%] shadow-md "
@@ -241,6 +342,7 @@ const Login = () => {
                 />
               )}
             </div>
+
             <button
               type="submit"
               className="w-full p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
@@ -248,14 +350,20 @@ const Login = () => {
             >
               {loading ? "Logging in..." : "Login"}
             </button>
-            <div className="mt-2 text-center">
+            <div className="mt-2  flex justify-between">
               <p>
                 Dont have an account ?
                 <Link to={"/singup"}> Create account </Link>
               </p>
+              <button
+                onClick={() => setShowforgotpassui(true)}
+                className="text-blue-700 bg-transparent outline-none border-none"
+              >
+                Forgotten password
+              </button>
             </div>
           </form>
-        )}
+        ) : null}
 
         <div className="right flex  w-[50%] transition-all rounded-md h-screen justify-center items-center text-white dark:bg-[#F0F4F8] dark:text-black bg-[#4A90E2]">
           <div className="w-[70%]">
