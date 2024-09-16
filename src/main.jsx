@@ -1,4 +1,4 @@
-import { StrictMode } from "react";
+import { StrictMode, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
@@ -16,7 +16,9 @@ import Login from "./componants/Login_singup/Login.jsx";
 import SingUp from "./componants/Login_singup/SingUp.jsx";
 import GetStarted from "./componants/Get Started page/GetStarted.jsx";
 import EditUserProfile from "./componants/User_Profile/EditUserProfile.jsx";
+import LoadingSpinner from "./componants/loading_Spiner/LoadingSpinner.jsx";
 
+// Lazy loading components
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="" element={<App />}>
@@ -31,6 +33,8 @@ const router = createBrowserRouter(
 
 createRoot(document.getElementById("root")).render(
   <Provider store={store}>
-    <RouterProvider router={router} />
+    <Suspense fallback={<LoadingSpinner />}>
+      <RouterProvider router={router} />
+    </Suspense>
   </Provider>
 );
